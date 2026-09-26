@@ -10,3 +10,7 @@ runs/
 *.pth
 *.pt
 .DS_Store
+data/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
