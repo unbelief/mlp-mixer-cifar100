@@ -4,6 +4,8 @@
   "parameters": 1021348,
   "epochs": 50,
   "batch_size": 64,
+  "dropout": 0.1,
+  "weight-decay": 0.05,
   "best_val_accuracy": 53.2,
   "training_time_seconds": 1555.0710606575012,
   "training_time_minutes": 25.917851010958355

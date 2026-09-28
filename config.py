@@ -12,7 +12,7 @@ class ModelConfig:
     depth: int = 4
     token_dim: int = 128
     channel_dim: int = 256
-    dropout: float = 0.1
+    dropout: float = 0.2
 
 
 MODEL_PRESETS = {

@@ -1,0 +1,10 @@
+{
+  "device": "cpu",
+  "model": "base",
+  "parameters": 1021348,
+  "epochs": 50,
+  "batch_size": 64,
+  "best_val_accuracy": 53.9,
+  "training_time_seconds": 72718.25938844681,
+  "training_time_minutes": 1211.9709898074468
+}

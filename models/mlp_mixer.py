@@ -37,7 +37,7 @@ class MixerBlock(nn.Module):
 class MLPMixer(nn.Module):
     def __init__(
         self, image_size=32, patch_size=4, in_channels=3, num_classes=100,
-        embed_dim=128, depth=4, token_dim=128, channel_dim=256, dropout=0.1
+        embed_dim=128, depth=4, token_dim=128, channel_dim=256, dropout=0.2
     ):
         super().__init__()
         if image_size % patch_size != 0:

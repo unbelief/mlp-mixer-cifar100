@@ -106,8 +106,8 @@ def main():
         "training_time_seconds": elapsed,
         "training_time_minutes": elapsed / 60,
     }
-    save_json(summary, "results/training_summary.json")
-    save_history_plot(history, "results/training_curves.png")
+    save_json(summary, "results/base_regularized/training_summary.json")
+    save_history_plot(history, "results/training_curves_epoch.png")
 
 
 if __name__ == "__main__":
