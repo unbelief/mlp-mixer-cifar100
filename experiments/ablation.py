@@ -1,8 +1,3 @@
-"""Hardware-independent structural ablation.
-
-Run from repository root:
-    python experiments/ablation.py
-"""
 import copy
 import os
 import sys
