@@ -18,8 +18,6 @@ class MLPBlock(nn.Module):
 
 
 class MixerBlock(nn.Module):
-    """MLP-Mixer block. Input shape: [B, tokens, channels]."""
-
     def __init__(self, num_tokens, channels, token_dim, channel_dim, dropout):
         super().__init__()
         self.norm_tokens = nn.LayerNorm(channels)
