@@ -1,88 +1,88 @@
-# MLP-Mixer on CIFAR-100
+# MLP-Mixer CIFAR-100
 
-A course-project implementation of MLP-Mixer for CIFAR-100 image classification with CPU/small-GPU friendly settings.
+这是一个基于 MLP-Mixer 的 CIFAR-100 图像分类实验项目。
 
-## Hardware-aware design
+## 运行环境
 
-The code automatically selects CUDA when available and otherwise runs on CPU.
+项目使用 PyTorch 和 torchvision。程序会根据当前环境选择 CUDA 或 CPU。
 
-Default settings are intentionally lightweight:
-- CIFAR-100
-- 32x32 RGB images
-- patch size 4
-- embedding dimension 128
-- 4 Mixer blocks
-- batch size 64
-- 30 epochs
+主要实验设置：
+- 数据集：CIFAR-100
+- 输入图像：32×32 RGB
+- patch size：4
+- batch size：64
+- 默认训练轮数：30
 
-For very limited hardware:
-python train.py --model tiny --epochs 10 --batch-size 32
+## 项目文件
 
-For CPU-only:
-python train.py --model tiny --device cpu --epochs 10 --batch-size 32
+- `models/mlp_mixer.py`：MLP-Mixer 模型
+- `config.py`：模型配置
+- `data.py`：CIFAR-100 数据加载
+- `train.py`：模型训练
+- `evaluate.py`：测试集评估
+- `predict.py`：单张样本预测
+- `utils.py`：训练过程中的辅助函数
+- `smoke_test.py`：简单的模型运行检查
+- `experiments/ablation.py`：模型结构参数对比
 
-For a small GPU:
-python train.py --model small --epochs 30 --batch-size 64
+## 安装
 
-## Architecture
-
-Image -> Patch Embedding -> Mixer Blocks -> Global Average Pooling -> Classifier
-
-Each Mixer block contains:
-1. Token-Mixing MLP: mixes information across image patches.
-2. Channel-Mixing MLP: mixes feature channels for each patch.
-
-The model does not use convolution inside the Mixer blocks and does not use self-attention.
-
-## Project structure
-
-mlp-mixer-cifar100/
-  models/mlp_mixer.py
-  data.py
-  config.py
-  utils.py
-  train.py
-  evaluate.py
-  predict.py
-  smoke_test.py
-  experiments/ablation.py
-  report/实验报告.md
-  requirements.txt
-
-## Installation
-
+```bash
 pip install -r requirements.txt
+```
 
-CIFAR-100 is downloaded automatically by torchvision on the first run.
+第一次运行时会自动下载 CIFAR-100 数据集。
 
-## Training
+## 训练
 
-Tiny:
-python train.py --model tiny --epochs 10 --batch-size 32
+Small 模型：
 
-Small:
+```bash
 python train.py --model small --epochs 30 --batch-size 64
+```
 
-Explicit CPU:
+Tiny 模型：
+
+```bash
+python train.py --model tiny --epochs 10 --batch-size 32
+```
+
+如果需要指定 CPU：
+
+```bash
 python train.py --model tiny --device cpu --epochs 10 --batch-size 32
+```
 
-Explicit CUDA:
+如果使用 CUDA：
+
+```bash
 python train.py --model small --device cuda --epochs 30 --batch-size 64
+```
 
-## Evaluation
+## 测试
 
+训练完成后可以使用保存的最佳模型进行测试：
+
+```bash
 python evaluate.py --checkpoint checkpoints/best.pt
+```
 
-## Smoke test
+测试结果和混淆矩阵会保存在 `results` 目录中。
 
+## 运行检查
+
+```bash
 python smoke_test.py
+```
 
-## Ablation
+## 结构参数对比
 
+```bash
 python experiments/ablation.py
+```
 
-The ablation script is hardware-independent and compares patch size, depth and embedding dimension.
+该脚本主要用于查看不同 patch size、网络深度和 embedding dimension 对模型参数量的影响。
 
-## Reference
+## 参考
 
 Tolstikhin et al., MLP-Mixer: An all-MLP Architecture for Vision.
