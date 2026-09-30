@@ -12,8 +12,20 @@ def build_loaders(data_dir="data", batch_size=64, num_workers=0,
         train_transform = transforms.Compose([
             transforms.RandomCrop(32, padding=4),
             transforms.RandomHorizontalFlip(),
+            transforms.ColorJitter(
+                brightness=0.2,
+                contrast=0.2,
+                saturation=0.2,
+                hue=0.05,
+            ),
             transforms.ToTensor(),
             transforms.Normalize(CIFAR100_MEAN, CIFAR100_STD),
+            transforms.RandomErasing(
+                p=0.25,
+                scale=(0.02, 0.15),
+                ratio=(0.3, 3.3),
+                value=0,
+            ),
         ])
     else:
         train_transform = transforms.Compose([
