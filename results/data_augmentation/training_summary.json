@@ -1,0 +1,40 @@
+{
+  "experiment": "data_augmentation",
+  "description": "MLP-Mixer CIFAR-100 with strengthened training data augmentation",
+  "model": "base",
+  "model_config": {
+    "image_size": 32,
+    "patch_size": 4,
+    "in_channels": 3,
+    "num_classes": 100,
+    "embed_dim": 192,
+    "depth": 6,
+    "token_dim": 128,
+    "channel_dim": 384,
+    "dropout": 0.2
+  },
+  "dataset": "CIFAR-100",
+  "epochs": 100,
+  "batch_size": 64,
+  "optimizer": "AdamW",
+  "learning_rate": 0.0005,
+  "weight_decay": 0.1,
+  "label_smoothing": 0.1,
+  "augmentation": {
+    "random_crop": {"size": 32, "padding": 4},
+    "random_horizontal_flip": true,
+    "color_jitter": {"brightness": 0.2, "contrast": 0.2, "saturation": 0.2, "hue": 0.05},
+    "random_erasing": {"p": 0.25, "scale": [0.02, 0.15], "ratio": [0.3, 3.3], "value": 0}
+  },
+  "best_epoch": 94,
+  "best_val_accuracy_percent": 55.66,
+  "best_val_loss": 2.525877973175049,
+  "final_epoch": 100,
+  "final_train_accuracy_percent": 80.60222222222222,
+  "final_val_accuracy_percent": 55.44,
+  "final_train_loss": 1.4221404705471463,
+  "final_val_loss": 2.526281506729126,
+  "train_val_accuracy_gap_percent": 25.16222222222222,
+  "history_source": "checkpoints/best.pt and checkpoints/last.pt",
+  "note": "No test accuracy is included because the uploaded checkpoints contain training/validation history but no test evaluation result."
+}
