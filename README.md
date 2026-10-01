@@ -105,3 +105,27 @@ Tolstikhin et al., MLP-Mixer: An all-MLP Architecture for Vision.
 
 实验记录位于 `results/data_augmentation/`，包括训练摘要、完整训练历史以及准确率/损失曲线。
 
+
+
+## Mixup 实验
+
+训练脚本现在支持 Mixup，用于进一步减小训练集与验证集之间的泛化差距。
+
+默认参数：
+- Mixup alpha：0.2
+- label smoothing：0.1
+- 验证集仍使用未混合的原始图像，不进行 Mixup
+
+Base 模型可以使用下面的命令进行实验：
+
+```bash
+python train.py --model base --epochs 100 --batch-size 64 --lr 5e-4 --weight-decay 0.1 --label-smoothing 0.1 --mixup-alpha 0.2 --experiment base_mixup
+```
+
+如果希望关闭 Mixup：
+
+```bash
+python train.py --model base --mixup-alpha 0
+```
+
+注意：启用 Mixup 后，训练阶段的 `train_acc` 是针对混合样本原始标签计算的近似指标，因此不能直接与未使用 Mixup 时的普通训练准确率比较；验证集准确率仍是标准指标。
