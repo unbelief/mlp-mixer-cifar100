@@ -86,3 +86,22 @@ python experiments/ablation.py
 ## 参考
 
 Tolstikhin et al., MLP-Mixer: An all-MLP Architecture for Vision.
+
+## 数据增强实验结果
+
+在保持 MLP-Mixer Base 结构、CIFAR-100 数据集和主要训练参数不变的情况下，训练集增加了以下增强：
+- RandomCrop
+- RandomHorizontalFlip
+- ColorJitter
+- RandomErasing
+
+本次实验使用 100 epochs、batch size 64、learning rate 5e-4、weight decay 0.1、label smoothing 0.1。
+
+实验结果：
+- 最佳验证集准确率：55.66%
+- 最佳验证集准确率出现在第 94 个 epoch
+- 第 100 个 epoch：训练集准确率 80.60%，验证集准确率 55.44%
+- 第 100 个 epoch：训练损失 1.4221，验证损失 2.5263
+
+实验记录位于 `results/data_augmentation/`，包括训练摘要、完整训练历史以及准确率/损失曲线。
+
