@@ -44,6 +44,7 @@ def main():
     p.add_argument("--data-dir", default="data")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--label-smoothing", type=float, default=0.1)
+    p.add_argument("--experiment", default="default")
     args = p.parse_args()
 
     seed_everything(args.seed)
@@ -97,17 +98,25 @@ def main():
 
     elapsed = time.time() - start
     summary = {
+        "experiment": args.experiment,
         "device": str(device),
         "model": args.model,
         "parameters": model.num_parameters(),
         "epochs": args.epochs,
         "batch_size": args.batch_size,
+        "learning_rate": args.lr,
+        "weight_decay": args.weight_decay,
+        "label_smoothing": args.label_smoothing,
         "best_val_accuracy": best_acc,
+        "best_epoch": history["val_acc"].index(best_acc) + 1,
         "training_time_seconds": elapsed,
         "training_time_minutes": elapsed / 60,
     }
-    save_json(summary, "results/base_regularized/training_summary.json")
-    save_history_plot(history, "results/training_curves_epoch.png")
+    result_dir = f"results/{args.experiment}"
+    ensure_dir(result_dir)
+    save_json(summary, f"{result_dir}/training_summary.json")
+    save_json(history, f"{result_dir}/training_history.json")
+    save_history_plot(history, f"{result_dir}/training_curves_epoch.png")
 
 
 if __name__ == "__main__":
