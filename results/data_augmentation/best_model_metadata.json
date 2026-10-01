@@ -1,0 +1,19 @@
+{
+  "artifact": "best.pt",
+  "model": "base",
+  "best_epoch": 94,
+  "best_val_accuracy_percent": 55.66,
+  "model_config": {
+    "image_size": 32,
+    "patch_size": 4,
+    "in_channels": 3,
+    "num_classes": 100,
+    "embed_dim": 192,
+    "depth": 6,
+    "token_dim": 128,
+    "channel_dim": 384,
+    "dropout": 0.2
+  },
+  "source": "uploaded best.pt from data augmentation experiment",
+  "note": "The binary checkpoint itself should be added with git because the GitHub connector used here does not expose a binary repository upload operation."
+}
