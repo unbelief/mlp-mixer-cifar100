@@ -12,23 +12,64 @@ from models import MLPMixer
 from utils import seed_everything, ensure_dir, save_json, save_history_plot
 
 
-def run_epoch(model, loader, criterion, optimizer, device, training):
+def mixup_data(images, targets, alpha):
+    if alpha <= 0:
+        return images, targets, targets, 1.0
+
+    beta = torch.distributions.Beta(alpha, alpha)
+    lam = beta.sample().item()
+    index = torch.randperm(images.size(0), device=images.device)
+
+    mixed_images = lam * images + (1.0 - lam) * images[index]
+    targets_a = targets
+    targets_b = targets[index]
+    return mixed_images, targets_a, targets_b, lam
+
+
+def run_epoch(model, loader, criterion, optimizer, device, training,
+              mixup_alpha=0.0):
     model.train(training)
     total_loss = total_correct = total = 0
     context = torch.enable_grad() if training else torch.no_grad()
+
     with context:
         for images, targets in tqdm(loader, leave=False):
             images, targets = images.to(device), targets.to(device)
+
             if training:
                 optimizer.zero_grad(set_to_none=True)
-            logits = model(images)
-            loss = criterion(logits, targets)
+
+            if training and mixup_alpha > 0:
+                inputs, targets_a, targets_b, lam = mixup_data(
+                    images, targets, mixup_alpha
+                )
+            else:
+                inputs = images
+                targets_a = targets_b = targets
+                lam = 1.0
+
+            logits = model(inputs)
+
+            if training and mixup_alpha > 0:
+                loss = (
+                    lam * criterion(logits, targets_a)
+                    + (1.0 - lam) * criterion(logits, targets_b)
+                )
+            else:
+                loss = criterion(logits, targets)
+
             if training:
                 loss.backward()
                 optimizer.step()
+
             total_loss += loss.item() * images.size(0)
+
+            # Under Mixup this is the accuracy against the original labels,
+            # so it is only a rough training metric. Validation accuracy
+            # remains a standard clean-data accuracy.
             total_correct += (logits.argmax(1) == targets).sum().item()
             total += images.size(0)
+
     return total_loss / total, 100.0 * total_correct / total
 
 
@@ -44,6 +85,12 @@ def main():
     p.add_argument("--data-dir", default="data")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--label-smoothing", type=float, default=0.1)
+    p.add_argument(
+        "--mixup-alpha",
+        type=float,
+        default=0.2,
+        help="Mixup alpha; 0 disables Mixup",
+    )
     p.add_argument("--experiment", default="default")
     args = p.parse_args()
 
@@ -72,8 +119,24 @@ def main():
     start = time.time()
 
     for epoch in range(1, args.epochs + 1):
-        train_loss, train_acc = run_epoch(model, train_loader, criterion, optimizer, device, True)
-        val_loss, val_acc = run_epoch(model, val_loader, criterion, optimizer, device, False)
+        train_loss, train_acc = run_epoch(
+            model,
+            train_loader,
+            criterion,
+            optimizer,
+            device,
+            True,
+            mixup_alpha=args.mixup_alpha,
+        )
+        val_loss, val_acc = run_epoch(
+            model,
+            val_loader,
+            criterion,
+            optimizer,
+            device,
+            False,
+            mixup_alpha=0.0,
+        )
         scheduler.step()
 
         history["train_loss"].append(train_loss)
@@ -107,6 +170,12 @@ def main():
         "learning_rate": args.lr,
         "weight_decay": args.weight_decay,
         "label_smoothing": args.label_smoothing,
+        "mixup_alpha": args.mixup_alpha,
+        "train_accuracy_note": (
+            "With Mixup enabled, train_acc is accuracy against the original "
+            "labels of mixed samples and is not directly comparable to clean "
+            "validation accuracy."
+        ),
         "best_val_accuracy": best_acc,
         "best_epoch": history["val_acc"].index(best_acc) + 1,
         "training_time_seconds": elapsed,
