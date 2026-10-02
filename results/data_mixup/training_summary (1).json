@@ -1,0 +1,17 @@
+{
+  "experiment": "base_mixup",
+  "device": "cuda",
+  "model": "base",
+  "parameters": 1021348,
+  "epochs": 100,
+  "batch_size": 64,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.1,
+  "label_smoothing": 0.1,
+  "mixup_alpha": 0.2,
+  "train_accuracy_note": "With Mixup enabled, train_acc is accuracy against the original labels of mixed samples and is not directly comparable to clean validation accuracy.",
+  "best_val_accuracy": 56.68,
+  "best_epoch": 79,
+  "training_time_seconds": 6489.101322174072,
+  "training_time_minutes": 108.15168870290121
+}
