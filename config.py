@@ -18,6 +18,7 @@ class ModelConfig:
 MODEL_PRESETS = {
     "tiny": ModelConfig(embed_dim=96, depth=3, token_dim=96, channel_dim=192),
     "small": ModelConfig(embed_dim=128, depth=4, token_dim=128, channel_dim=256),
+    "medium": ModelConfig(embed_dim=160, depth=5, token_dim=128, channel_dim=320),
     "base": ModelConfig(embed_dim=192, depth=6, token_dim=128, channel_dim=384),
 }
 
