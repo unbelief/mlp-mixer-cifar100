@@ -118,6 +118,12 @@ def main():
     best_acc = -1.0
     start = time.time()
 
+    # Keep experiment checkpoints separate so one experiment cannot overwrite
+    # the best checkpoint from another experiment.
+    checkpoint_prefix = args.experiment if args.experiment != "default" else args.model
+    best_checkpoint_path = f"checkpoints/{checkpoint_prefix}_best.pt"
+    last_checkpoint_path = f"checkpoints/{checkpoint_prefix}_last.pt"
+
     for epoch in range(1, args.epochs + 1):
         train_loss, train_acc = run_epoch(
             model,
@@ -154,9 +160,13 @@ def main():
             "val_acc": val_acc,
             "history": history,
         }
+        torch.save(checkpoint, last_checkpoint_path)
+        # Keep the historical generic names for compatibility with existing
+        # evaluation workflows, while also preserving experiment-specific files.
         torch.save(checkpoint, "checkpoints/last.pt")
         if val_acc > best_acc:
             best_acc = val_acc
+            torch.save(checkpoint, best_checkpoint_path)
             torch.save(checkpoint, "checkpoints/best.pt")
 
     elapsed = time.time() - start
@@ -178,6 +188,7 @@ def main():
         ),
         "best_val_accuracy": best_acc,
         "best_epoch": history["val_acc"].index(best_acc) + 1,
+        "best_checkpoint": best_checkpoint_path,
         "training_time_seconds": elapsed,
         "training_time_minutes": elapsed / 60,
     }
