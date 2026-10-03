@@ -76,12 +76,11 @@ def save_accuracy_comparison(train_accuracy, val_accuracy, output_path, checkpoi
 
     train_y = plot_bottom - (train_accuracy / 100.0) * plot_height
     val_y = plot_bottom - (val_accuracy / 100.0) * plot_height
-    epoch_text = f" — checkpoint epoch {checkpoint_epoch}" if checkpoint_epoch is not None else ""
 
     svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
 <rect width="100%" height="100%" fill="white"/>
 <text x="450" y="42" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="bold">Clean Training vs Validation Accuracy</text>
-<text x="450" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#555">MLP-Mixer{epoch_text}</text>
+<text x="450" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#555">MLP-Mixer</text>
 <line x1="{plot_left}" y1="{plot_bottom}" x2="{plot_right}" y2="{plot_bottom}" stroke="#333" stroke-width="2"/>
 <line x1="{plot_left}" y1="{plot_top}" x2="{plot_left}" y2="{plot_bottom}" stroke="#333" stroke-width="2"/>
 '''
