@@ -67,6 +67,48 @@ def save_split_report(result, classes, output_dir, split_name):
     )
 
 
+def save_accuracy_comparison(train_accuracy, val_accuracy, output_path, checkpoint_epoch=None):
+    """Save a simple SVG bar chart comparing clean train and validation accuracy."""
+    width, height = 900, 560
+    plot_left, plot_right = 150, 800
+    plot_top, plot_bottom = 120, 450
+    plot_height = plot_bottom - plot_top
+
+    train_y = plot_bottom - (train_accuracy / 100.0) * plot_height
+    val_y = plot_bottom - (val_accuracy / 100.0) * plot_height
+    epoch_text = f" — checkpoint epoch {checkpoint_epoch}" if checkpoint_epoch is not None else ""
+
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">
+<rect width="100%" height="100%" fill="white"/>
+<text x="450" y="42" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" font-weight="bold">Clean Training vs Validation Accuracy</text>
+<text x="450" y="72" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#555">MLP-Mixer{epoch_text}</text>
+<line x1="{plot_left}" y1="{plot_bottom}" x2="{plot_right}" y2="{plot_bottom}" stroke="#333" stroke-width="2"/>
+<line x1="{plot_left}" y1="{plot_top}" x2="{plot_left}" y2="{plot_bottom}" stroke="#333" stroke-width="2"/>
+'''
+    for pct in (20, 40, 60, 80):
+        y = plot_bottom - (pct / 100.0) * plot_height
+        svg += f'<line x1="{plot_left}" y1="{y:.1f}" x2="{plot_right}" y2="{y:.1f}" stroke="#ddd"/>\\n'
+    for pct in (0, 20, 40, 60, 80, 100):
+        y = plot_bottom - (pct / 100.0) * plot_height + 5
+        svg += f'<text x="130" y="{y:.1f}" text-anchor="end" font-family="Arial" font-size="13">{pct}%</text>\\n'
+
+    train_x, val_x, bar_width = 275, 535, 170
+    train_h = plot_bottom - train_y
+    val_h = plot_bottom - val_y
+    svg += f'<rect x="{train_x}" y="{train_y:.2f}" width="{bar_width}" height="{train_h:.2f}" fill="#4C78A8"/>\\n'
+    svg += f'<rect x="{val_x}" y="{val_y:.2f}" width="{bar_width}" height="{val_h:.2f}" fill="#F58518"/>\\n'
+    svg += f'<text x="360" y="{train_y - 14:.1f}" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold">{train_accuracy:.2f}%</text>\\n'
+    svg += f'<text x="620" y="{val_y - 14:.1f}" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold">{val_accuracy:.2f}%</text>\\n'
+    svg += '<text x="360" y="482" text-anchor="middle" font-family="Arial" font-size="18">Clean Train</text>\\n'
+    svg += '<text x="620" y="482" text-anchor="middle" font-family="Arial" font-size="18">Clean Validation</text>\\n'
+    gap = train_accuracy - val_accuracy
+    svg += f'<text x="450" y="525" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Generalization gap: {gap:.2f} percentage points</text>\\n'
+    svg += '</svg>\\n'
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(svg)
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--checkpoint", default="checkpoints/best.pt")
