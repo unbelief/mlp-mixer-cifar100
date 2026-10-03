@@ -1,0 +1,20 @@
+{
+  "checkpoint": "checkpoints/medium_mixup_best.pt",
+  "checkpoint_epoch": 93,
+  "checkpoint_val_accuracy": 55.38,
+  "evaluation_type": "clean_train_vs_clean_validation",
+  "augmentation": false,
+  "train": {
+    "loss": 0.9979057342529297,
+    "accuracy": 72.31111111111112,
+    "correct": 32540,
+    "total": 45000
+  },
+  "validation": {
+    "loss": 1.7332583269119262,
+    "accuracy": 55.38,
+    "correct": 2769,
+    "total": 5000
+  },
+  "generalization_gap_percentage_points": 16.931111111111115
+}
